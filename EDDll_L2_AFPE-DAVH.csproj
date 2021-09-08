@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <Compile Remove="DataStructures\**" />
+    <Compile Remove="HUFFMANN_STRING\**" />
     <Content Remove="DataStructures\**" />
+    <Content Remove="HUFFMANN_STRING\**" />
     <EmbeddedResource Remove="DataStructures\**" />
+    <EmbeddedResource Remove="HUFFMANN_STRING\**" />
     <None Remove="DataStructures\**" />
+    <None Remove="HUFFMANN_STRING\**" />
   </ItemGroup>
 
 
