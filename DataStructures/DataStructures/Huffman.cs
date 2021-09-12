@@ -9,7 +9,7 @@ namespace DataStructures
         internal Heap<HuffmanNode> heap;
         internal AVLTree<HuffmanNode> binaryCodes;
 
-        Huffman()
+        public Huffman()
         {
             binaryCodes = new AVLTree<HuffmanNode>();
         }
@@ -17,10 +17,11 @@ namespace DataStructures
         public byte[] Compress(string text)
         {
             byte[] result;
+            buildHeap(text);
             while (heap.Length() > 1)
             {
-                var x = heap.getMin();
-                var y = heap.getMin();
+                var x = heap.extractMin().value;
+                var y = heap.extractMin().value;
                 HuffmanNode node = new HuffmanNode('\0', (x.frecuency + y.frecuency), false);
                 node.left = x;
                 node.rigth = y;
