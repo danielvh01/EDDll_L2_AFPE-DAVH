@@ -46,28 +46,23 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         {
                             Directory.CreateDirectory(_environment.WebRootPath + "\\Upload\\");
                         }
+
                         using (FileStream fileStream = System.IO.File.Create(_environment.WebRootPath + "\\Upload\\" + uniqueFileName))
                         {
                             objFile.FILE.CopyTo(fileStream);
                             fileStream.Flush();
                         }
 
-                        using FileStream fs = System.IO.File.OpenRead(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
-                        byte[] buf = new byte[1024];
-                        int c;
-                        string content = "";
-                        while ((c = fs.Read(buf, 0, buf.Length)) > 0)
-                        {
-                            content += Encoding.UTF8.GetString(buf, 0, c);
-                        }
+                        byte [] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
                         Huffman compressor = new Huffman();
 
-                        MemoryStream memoryStream = new MemoryStream(compressor.Compress(content));
-                        StreamReader streamReader = new StreamReader(memoryStream);
-                        StreamWriter file = new StreamWriter(name + ".huff", false);
-                        file.Write(streamReader.ReadToEnd());
-                        file.Close();
+                        byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
+
+                        FileStream fs2 = new FileStream(name + ".huff", FileMode.OpenOrCreate);
+                        fs2.Write(textCompressed,0,textCompressed.Length);
+                        fs2.Flush();
+                        fs2.Close();
 
                         CompressModel compressObj = new CompressModel
                         {
@@ -77,13 +72,14 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                             compressionFactor = 0.0,
                             reductionPercentage = 0.0 + "%",
                         };
+
                         Singleton.Instance.compressions.InsertAtStart(compressObj);
+
                         return File(System.IO.File.ReadAllBytes(name + ".huff"), "application/octet-stream", name + ".huff");
                     }
                     else
                     {
                         return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
-
                     }
                 }
                 else
@@ -91,8 +87,11 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                     return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
                 }
             }
-            catch
+            catch(Exception e)
             {
+                StreamWriter file = new StreamWriter("Error.txt", false);
+                file.Write(e);
+                file.Close();
                 return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
             }
             
