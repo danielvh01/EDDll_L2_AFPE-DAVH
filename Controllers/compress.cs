@@ -59,10 +59,6 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
 
-                        FileStream fs2 = new FileStream(name + ".huff", FileMode.OpenOrCreate);
-                        fs2.Write(textCompressed,0,textCompressed.Length);
-                        fs2.Flush();
-                        fs2.Close();
 
                         CompressModel compressObj = new CompressModel
                         {
@@ -75,7 +71,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         Singleton.Instance.compressions.InsertAtStart(compressObj);
 
-                        return File(System.IO.File.ReadAllBytes(name + ".huff"), "application/octet-stream", name + ".huff");
+                        return File(textCompressed, "application/text", name + ".huff");
                     }
                     else
                     {
