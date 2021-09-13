@@ -9,16 +9,14 @@ namespace DataStructures
         public char value;
         public string binary_value;
         public int frecuency;
-        public double probability;
         public HuffmanNode rigth;
         public HuffmanNode left;
         public bool leaf;
 
-        public HuffmanNode(char new_value, int new_frecuency, double new_probability, bool l)
+        public HuffmanNode(char new_value, int new_frecuency, bool l)
         {
             value = new_value;
             frecuency = new_frecuency;
-            probability = new_probability;
             binary_value = "";
             rigth = null;
             left = null;

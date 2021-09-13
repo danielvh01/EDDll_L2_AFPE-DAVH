@@ -24,7 +24,7 @@ namespace DataStructures
             {
                 var x = heap.extractMin().value;
                 var y = heap.extractMin().value;
-                HuffmanNode node = new HuffmanNode('\0', (x.frecuency + y.frecuency), (x.probability + y.probability), false);
+                HuffmanNode node = new HuffmanNode('\0', (x.frecuency + y.frecuency), false);
                 node.left = x;
                 node.rigth = y;
                 heap.insertKey(node, node.frecuency.ToString());
@@ -97,10 +97,9 @@ namespace DataStructures
         private void buildHeap(string text)
         {
             heap = new Heap<HuffmanNode>(text.Length);
-            int cant = 0;
+            int cant = text.Length;
             while(text.Length > 0)
             {
-                cant++;
                 int cont = 1;
                 char character = text[0];
                 text = text.Remove(0, 1);
@@ -110,11 +109,10 @@ namespace DataStructures
                     {
                         text = text.Remove(i, 1);
                         cont++;
-                        cant++;
                     }
                 }
-                var node = new HuffmanNode(character, cont, cont / cant, true);
-                heap.insertKey(node, node.probability.ToString());
+                var node = new HuffmanNode(character, cont, true);
+                heap.insertKey(node, node.frecuency.ToString());
                 if(cont / 256 > bytesPerChar)
                 {
                     bytesPerChar = cont / 256;
