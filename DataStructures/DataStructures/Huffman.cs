@@ -8,6 +8,7 @@ namespace DataStructures
     {
         internal Heap<HuffmanNode> heap;
         internal DoubleLinkedList<HuffmanNode> binaryCodes;
+        int bytesPerChar = 1;
 
         public Huffman()
         {
@@ -17,12 +18,13 @@ namespace DataStructures
         public byte[] Compress(string text)
         {
             byte[] result;
+            
             buildHeap(text);
             while (heap.Length() > 1)
             {
                 var x = heap.extractMin().value;
                 var y = heap.extractMin().value;
-                HuffmanNode node = new HuffmanNode('\0', (x.frecuency + y.frecuency), false);
+                HuffmanNode node = new HuffmanNode('\0', (x.frecuency + y.frecuency), (x.probability + y.probability), false);
                 node.left = x;
                 node.rigth = y;
                 heap.insertKey(node, node.frecuency.ToString());
@@ -42,10 +44,18 @@ namespace DataStructures
                 binaryText += 0;
                 cant--;
             }
-            result = new byte[binaryText.Length / 8];
+            byte[] content = new byte[binaryText.Length / 8];
             for(int i = 0; i < (binaryText.Length / 8); i++)
             {
-                result[i] = binaryToByte(binaryText.Substring(8*i, 8));
+                content[i] = binaryToByte(binaryText.Substring(8*i, 8));
+            }
+            result = new byte[3 + (bytesPerChar + 1)*binaryCodes.Length + content.Length];
+            result[0] = Convert.ToByte(char.Parse(bytesPerChar.ToString()));
+            result[1] = Convert.ToByte('\0');
+            for(int i = 0; i < binaryCodes.Length; i++)
+            {
+                int character = i * (bytesPerChar + 1);
+                result[2 + character] = Convert.ToByte(binaryCodes.Get(i).value);
             }
             return result;
         }
@@ -57,7 +67,6 @@ namespace DataStructures
             {
                 number += int.Parse(Math.Pow(2, 7 - i).ToString()) * int.Parse(binaryByte.Substring(i, 1));
             }
-            char.ConvertFromUtf32(number);
             return byte.Parse(number.ToString());
         }
 
@@ -79,7 +88,7 @@ namespace DataStructures
 
         private void buildHeap(string text)
         {
-            DoubleLinkedList<HuffmanNode> list = new DoubleLinkedList<HuffmanNode>();
+            heap = new Heap<HuffmanNode>(text.Length);
             int cant = 0;
             while(text.Length > 0)
             {
@@ -96,15 +105,14 @@ namespace DataStructures
                         cant++;
                     }
                 }
-                list.InsertAtEnd(new HuffmanNode(character, cont, true));
+                var node = new HuffmanNode(character, cont, cont / cant, true);
+                heap.insertKey(node, node.probability.ToString());
+                if(cont / 256 > bytesPerChar)
+                {
+                    bytesPerChar = cont / 256;
+                }
             }
 
-            heap = new Heap<HuffmanNode>(cant);
-            foreach(var node in list)
-            {
-                node.frecuency = node.frecuency / cant;
-                heap.insertKey(node, node.frecuency.ToString());
-            }
         }
     }
 }
