@@ -63,14 +63,17 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         Huffman compressor = new Huffman();
 
-                        MemoryStream memoryStream = new MemoryStream(compressor.Compress(content));
-                        StreamReader streamReader = new StreamReader(memoryStream);
-                        StreamWriter file = new StreamWriter(name + ".huff", false);
-                        file.Write(streamReader.ReadToEnd());
-                        file.Close();
-                        //FileStream fs2 = new FileStream(name + ".huff", FileMode.Create);
-                        //fs2.Write(memoryStream.ToArray());
-                        //fs.Close();
+                        //MemoryStream memoryStream = new MemoryStream(compressor.Compress(content));
+                        //StreamReader streamReader = new StreamReader(memoryStream);
+                        //StreamWriter file = new StreamWriter(name + ".huff", false);
+                        //file.Write(streamReader.ReadToEnd());
+                        //file.Close();
+                        byte[] textCompressed = compressor.Compress(content);
+                        FileStream fs2 = new FileStream(name + ".huff", FileMode.OpenOrCreate);
+                        fs2.Write(textCompressed,0,textCompressed.Length);
+                        fs2.Flush();
+                        fs2.Close();
+
                         CompressModel compressObj = new CompressModel
                         {
                             originalFileName = objFile.FILE.FileName,
@@ -85,7 +88,6 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                     else
                     {
                         return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
-
                     }
                 }
                 else
@@ -93,8 +95,11 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                     return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
                 }
             }
-            catch
+            catch(Exception e)
             {
+                StreamWriter file = new StreamWriter("Error.txt", false);
+                file.Write(e);
+                file.Close();
                 return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
             }
             
