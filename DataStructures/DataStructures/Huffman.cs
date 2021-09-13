@@ -56,6 +56,7 @@ namespace DataStructures
             {
                 int character = i * (bytesPerChar + 1);
                 result[2 + character] = Convert.ToByte(binaryCodes.Get(i).value);
+                int bytesLenght = 0;
             }
             return result;
         }
