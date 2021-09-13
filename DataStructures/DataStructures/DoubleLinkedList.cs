@@ -103,6 +103,13 @@ namespace DataStructures
             }
         }
 
+        public void Swap(int posa, int posb)
+        {
+            var a = Get(posa);
+            get(posa).value = Get(posb);
+            get(posb).value = a;
+        }
+
 
         void DeteleAtStart()
         {
@@ -195,12 +202,12 @@ namespace DataStructures
         }
 
         //Obtiene el primer dato generico que encuentre en la lista
-        T GetFirst()
+        Node<T> GetFirst()
         {
             //verifica que la cantidad sea mayor a cero para devolver el primer dato generico que encuentre en la lista
             if (Length > 0)
             {
-                return First.value;
+                return First;
             }
             //De lo contrario retornara un null
             else
@@ -210,12 +217,12 @@ namespace DataStructures
         }
 
         //Obtiene el ultimo dato generico que encuentre en la lista
-        T GetEnd()
+        Node<T> GetEnd()
         {
             //verifica que la cantidad sea mayor a cero para devolver el ultimo dato generico que encuentre en la lista
             if (Length > 0)
             {
-                return End.value;
+                return End;
             }
             else
             {
@@ -223,9 +230,20 @@ namespace DataStructures
             }
         }
 
-
-        //retorna el dato generico en base a la posicion deseada
         public T Get(int position)
+        {
+            var result = get(position);
+            if (result != null)
+            {
+                return result.value;
+            }
+            else
+            {
+                return default;
+            }
+        }
+        //retorna el dato generico en base a la posicion deseada
+        private Node<T> get(int position)
         {
             //si la cantidad es mayor a cero procede a evaluar las siguientes condiciones
             if (Length > 0)
@@ -253,18 +271,18 @@ namespace DataStructures
                     // si al llegar a la posicion deseada el nodo es distinto a nulo, retorna el valor deseado
                     if (node != null)
                     {
-                        return node.value;
+                        return node;
                     }
                     //De lo contrario volvera un valor nulo
                     else
                     {
-                        return default;
+                        return null;
                     }
                 }
             }
             else
             {
-                return default;
+                return null;
             }
         }
 

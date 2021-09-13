@@ -7,11 +7,11 @@ namespace DataStructures
     public class Huffman
     {
         internal Heap<HuffmanNode> heap;
-        internal AVLTree<HuffmanNode> binaryCodes;
+        internal DoubleLinkedList<HuffmanNode> binaryCodes;
 
         public Huffman()
         {
-            binaryCodes = new AVLTree<HuffmanNode>();
+            binaryCodes = new DoubleLinkedList<HuffmanNode>();
         }
 
         public byte[] Compress(string text)
@@ -36,7 +36,7 @@ namespace DataStructures
                 binaryText += character.binary_value;
             }
 
-            int cant = binaryText.Length % 8;
+            int cant = 8 - binaryText.Length % 8;
             while (cant > 0)
             {
                 binaryText += 0;
@@ -55,25 +55,26 @@ namespace DataStructures
             int number = 0;
             for(int i = 0; i < 8; i++)
             {
-                number += int.Parse(Math.Pow(2, 8 - i).ToString()) * int.Parse(binaryByte.Substring(i, 1));
+                number += int.Parse(Math.Pow(2, 7 - i).ToString()) * int.Parse(binaryByte.Substring(i, 1));
             }
-            char character = char.Parse(number.ToString());
-            return byte.Parse(character.ToString());
+            char.ConvertFromUtf32(number);
+            return byte.Parse(number.ToString());
         }
 
         void buildBinaryCodes(HuffmanNode root)
         {
-            root.left.binary_value = root.binary_value + 0;
-            root.rigth.binary_value = root.binary_value + 1;
-            if(!root.leaf)
+            if(root.leaf)
             {
-                buildBinaryCodes(root.left);
-                buildBinaryCodes(root.rigth);
+                binaryCodes.InsertAtEnd(root);
             }
             else
             {
-                binaryCodes.Insert(root);
+                root.left.binary_value = root.binary_value + 0;
+                root.rigth.binary_value = root.binary_value + 1;
+                buildBinaryCodes(root.left);
+                buildBinaryCodes(root.rigth);
             }
+            
         }
 
         private void buildHeap(string text)
@@ -92,6 +93,7 @@ namespace DataStructures
                     {
                         text = text.Remove(i, 1);
                         cont++;
+                        cant++;
                     }
                 }
                 list.InsertAtEnd(new HuffmanNode(character, cont, true));

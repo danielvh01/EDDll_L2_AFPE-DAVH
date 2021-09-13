@@ -19,7 +19,7 @@ namespace DataStructures
             priority = p;
         }
 
-        public int CompareTo(Object obj)
+        public int CompareTo(object obj)
         {
             var comparer = ((HeapNode<T>)obj).priority;
             return comparer.CompareTo(priority);

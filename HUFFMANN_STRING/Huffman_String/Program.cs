@@ -13,10 +13,10 @@ namespace Huffman_String
             string text = Console.ReadLine();
             Console.WriteLine("El mensaje comprimido es el siguiente:");
             byte[] compress = compresor.Compress(text);
-            string result = string.Join('\0', compress);
             MemoryStream memoryStream = new MemoryStream(compress);
             StreamReader streamReader = new StreamReader(memoryStream);
-            Console.WriteLine(result);
+            Console.WriteLine(streamReader.ReadToEnd());
+            Console.ReadLine();
         }
     }
 }

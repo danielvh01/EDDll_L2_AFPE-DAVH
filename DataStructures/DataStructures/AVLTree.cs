@@ -24,7 +24,7 @@ namespace DataStructures
         #endregion
         public void Insert(T newvalue)
         {
-            Insert_New(newvalue, Root);
+            Root = Insert_New(newvalue, Root);
         }
         #region Methods
         //Metodo de insersión de un nuevo elemento
