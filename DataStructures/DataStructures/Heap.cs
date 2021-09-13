@@ -29,28 +29,7 @@ namespace DataStructures
         {
             return heapArray.Length;
         }
-        //Intercambia dos elementos en el heap
-        public void Swap(int a, int b)
-        {
-            //Intercambio cuando a es mayor
-            if (a > b)
-            {
-                HeapNode<T> temp = heapArray.Get(a);
-                heapArray.Delete(a);
-                heapArray.Insert(heapArray.Get(b), a);
-                heapArray.Delete(b);
-                heapArray.Insert(temp, b);
-            }
-            //Intercambio cuando b es mayor
-            else
-            {
-                HeapNode<T> temp = heapArray.Get(b);
-                heapArray.Delete(b);
-                heapArray.Insert(heapArray.Get(a), b);
-                heapArray.Delete(a);
-                heapArray.Insert(temp, a);
-            }
-        }
+        
         //Obtiene el Nodo padre
         public int Parent(int index)
         {
@@ -80,7 +59,7 @@ namespace DataStructures
 
             while (i > 0 && heapArray.Get(i).CompareTo(heapArray.Get(Parent(i))) > 0)
             {
-                Swap(i, Parent(i));
+                heapArray.Swap(i, Parent(i));
                 i = Parent(i);
             }
             return true;
@@ -109,6 +88,9 @@ namespace DataStructures
                 heapArray.Delete(0);
                 if (Length() > 0)
                 {
+                    HeapNode<T> last = heapArray.Get(heapArray.Length);
+                    heapArray.Delete(heapArray.Length);
+                    heapArray.InsertAtStart(last);
                     MoveDown(0);
                 }
                 return result;
@@ -142,23 +124,19 @@ namespace DataStructures
         {
             int lchild = Left(position);
             int rchild = Right(position);
-            int largest;
-            if ((lchild < Length()) && (heapArray.Get(position).CompareTo(heapArray.Get(lchild)) < 0))
+            int smallest = position;
+            if ((lchild < Length()) && (heapArray.Get(smallest).CompareTo(heapArray.Get(lchild)) < 0))
             {
-                largest = lchild;
+                smallest = lchild;
             }
-            else
+            if ((rchild < Length()) && (heapArray.Get(smallest).CompareTo(heapArray.Get(rchild)) < 0))
             {
-                largest = position;
+                smallest = rchild;
             }
-            if ((rchild < Length()) && (heapArray.Get(largest).CompareTo(heapArray.Get(rchild)) < 0))
+            if (smallest != position)
             {
-                largest = rchild;
-            }
-            if (largest != position)
-            {
-                Swap(position, largest);
-                MoveDown(largest);
+                heapArray.Swap(position, smallest);
+                MoveDown(smallest);
             }
         }
 
