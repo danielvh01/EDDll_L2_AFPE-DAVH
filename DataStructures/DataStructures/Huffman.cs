@@ -49,14 +49,22 @@ namespace DataStructures
             {
                 content[i] = binaryToByte(binaryText.Substring(8*i, 8));
             }
-            result = new byte[3 + (bytesPerChar + 1)*binaryCodes.Length + content.Length];
+            int lenghtFrecuencys = (bytesPerChar + 1) * binaryCodes.Length;
+            result = new byte[3 + lenghtFrecuencys + content.Length];
             result[0] = Convert.ToByte(char.Parse(bytesPerChar.ToString()));
-            result[1] = Convert.ToByte('\0');
             for(int i = 0; i < binaryCodes.Length; i++)
             {
                 int character = i * (bytesPerChar + 1);
-                result[2 + character] = Convert.ToByte(binaryCodes.Get(i).value);
+                var x = binaryCodes.Get(i);
+                result[2 + character] = Convert.ToByte(x.value);
+                int number = x.frecuency;
+                for(int j = 0; j < bytesPerChar; j++)
+                {
+                    result[2 + character + (bytesPerChar - j)] = Convert.ToByte(Convert.ToChar(number % 256));
+                    number = number / 256;
+                }
             }
+            content.CopyTo(result, 3 + lenghtFrecuencys);
             return result;
         }
 
