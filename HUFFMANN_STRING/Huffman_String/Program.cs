@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using DataStructures;
 
 namespace Huffman_String
@@ -9,13 +10,20 @@ namespace Huffman_String
         static void Main(string[] args)
         {
             Huffman compresor = new Huffman();
-            Console.WriteLine("Escriba el mensaje que desea comprimir:");
-            string text = Console.ReadLine();
+            string text;
+            do
+            {
+                Console.WriteLine("Escriba el mensaje que desea comprimir:");
+                text = Console.ReadLine();
+                if(text.Length == 0)
+                {
+                    Console.WriteLine("Error, el texto esta vacio por favor intentelo de nuevo");
+                }
+            }
+            while (text.Length == 0);
             Console.WriteLine("El mensaje comprimido es el siguiente:");
             byte[] compress = compresor.Compress(text);
-            MemoryStream memoryStream = new MemoryStream(compress);
-            StreamReader streamReader = new StreamReader(memoryStream);
-            Console.WriteLine(streamReader.ReadToEnd());
+            Console.WriteLine(Encoding.UTF8.GetString(compress));
             Console.ReadLine();
         }
     }
