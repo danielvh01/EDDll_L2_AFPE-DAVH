@@ -68,7 +68,9 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         StreamWriter file = new StreamWriter(name + ".huff", false);
                         file.Write(streamReader.ReadToEnd());
                         file.Close();
-
+                        //FileStream fs2 = new FileStream(name + ".huff", FileMode.Create);
+                        //fs2.Write(memoryStream.ToArray());
+                        //fs.Close();
                         CompressModel compressObj = new CompressModel
                         {
                             originalFileName = objFile.FILE.FileName,
