@@ -19,8 +19,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
     [Route("api/")]
     [ApiController]
     public class compress : ControllerBase
-    {
-        
+    {      
         public static IWebHostEnvironment _environment;
         public compress(IWebHostEnvironment environment)
         {
