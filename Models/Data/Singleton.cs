@@ -28,10 +28,7 @@ namespace EDDll_L2_AFPE_DAVH.Models.Data
 
         public string getCompressions()
         {
-            for (int i = 0; i < compressions.Length; i++)
-            {
-                TCompressions += JsonSerializer.Serialize(compressions.Get(i));
-            }
+            TCompressions = JsonSerializer.Serialize(compressions);
             return TCompressions;
         }
     }

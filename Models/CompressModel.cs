@@ -9,8 +9,8 @@ namespace EDDll_L2_AFPE_DAVH.Models
     {
         public string originalFileName { get; set; }
         public string CompressedFileName_Route { get; set; }
-        public double rateOfCompression { get; set; }
-        public double compressionFactor { get; set; }
+        public string rateOfCompression { get; set; }
+        public string compressionFactor { get; set; }
         public string reductionPercentage { get; set; }
 
         public int CompareTo(object obj)

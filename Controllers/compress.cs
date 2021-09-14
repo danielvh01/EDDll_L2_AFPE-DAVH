@@ -16,7 +16,7 @@ using Newtonsoft.Json;//Libreria usada para generar JSON en un formato especific
 
 namespace EDDll_L2_AFPE_DAVH.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class compress : ControllerBase
     {
@@ -30,10 +30,9 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
         public class FileUPloadAPI
         {
             public IFormFile FILE { get; set; }
-        }
-
+        }        
         [HttpPost("compress/{name}")]        
-        public  FileResult Post(string name, [FromForm] FileUPloadAPI? objFile)
+        public  IActionResult Post(string name, [FromForm] FileUPloadAPI? objFile)
         {            
             try
             {
@@ -63,10 +62,10 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         CompressModel compressObj = new CompressModel
                         {
                             originalFileName = objFile.FILE.FileName,
-                            CompressedFileName_Route = name + ".huff" + "-->" + "ruta de archivo comprimido",
-                            rateOfCompression = 0.0,
-                            compressionFactor = 0.0,
-                            reductionPercentage = 0.0 + "%",
+                            CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
+                            rateOfCompression = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)),2).ToString(),
+                            compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(textCompressed.Length)),2).ToString(),
+                            reductionPercentage = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
                         };
 
                         Singleton.Instance.compressions.InsertAtStart(compressObj);
@@ -75,26 +74,23 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                     }
                     else
                     {
-                        return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
+                        return StatusCode(500);
                     }
                 }
                 else
                 {
-                    return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
+                    return StatusCode(500);
                 }
             }
-            catch(Exception e)
+            catch
             {
-                StreamWriter file = new StreamWriter("Error.txt", false);
-                file.Write(e);
-                file.Close();
-                return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
+                return StatusCode(500);
             }
             
         }
 
         [HttpPost("decompress")]
-        public FileResult Post([FromForm] FileUPloadAPI? objFile)
+        public IActionResult Post([FromForm] FileUPloadAPI? objFile)
         {
             try
             {
@@ -111,51 +107,48 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         {
                             objFile.FILE.CopyTo(fileStream);
                             fileStream.Flush();
-                        }                        
-                        using FileStream fs = System.IO.File.OpenRead(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
-                        byte[] buf = new byte[1024];
-                        int c;
-                        string content = "";
-                        while ((c = fs.Read(buf, 0, buf.Length)) > 0)
-                        {
-                            content += Encoding.UTF8.GetString(buf, 0, c);
                         }
-
+                        byte[] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
                         Huffman decompress = new Huffman();
-                        //CALL METHOD IN ORDER TO DECOMPRESS
-                        MemoryStream memoryStream = new MemoryStream(decompress.Compress(content));//CORREGIR A DECOMPRESS!!!!!!!!!!!!!!!!
-                        StreamReader streamReader = new StreamReader(memoryStream);
-                        StreamWriter file = new StreamWriter(objFile.FILE.FileName + ".txt", false);
-                        file.Write(streamReader.ReadToEnd());
-                        file.Close();
-                        return File(System.IO.File.ReadAllBytes(objFile.FILE.FileName + ".txt"), "application/octet-stream", objFile.FILE.FileName + ".txt");
+
+                        byte[] textDecompressed = decompress.Compress(Encoding.UTF8.GetString(content));
+
+                        return File(textDecompressed, "application/octet-stream", objFile.FILE.FileName + ".txt");
                     }
                     else
                     {
-                        return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
+                        return StatusCode(500);
                     }
                 }
                 else
                 {
-                    return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
+                    return StatusCode(500);
                 }
             }
             catch
             {
-                return File(System.IO.File.ReadAllBytes("Error.txt"), "application/octet-stream", "Error.txt");
+                return StatusCode(500);
             }
         }
 
 
         // GET api/<HuffmanCompressor>
-        [HttpGet]
-        public FileResult Get()
+
+        [HttpGet("compressions")]
+        public IActionResult Get()
         {
-            StreamWriter file = new StreamWriter("COMPRESSIONS" + ".JSON", false);
-            file.Write(Singleton.Instance.getCompressions());
-            file.Close();
-            return File(System.IO.File.ReadAllBytes("COMPRESSIONS" + ".JSON"), "application/octet-stream", "COMPRESSIONS.JSON");
+            try
+            {
+                StreamWriter file = new StreamWriter("COMPRESSIONS" + ".JSON", false);
+                file.Write(Singleton.Instance.getCompressions());
+                file.Close();
+                return File(System.IO.File.ReadAllBytes("COMPRESSIONS" + ".JSON"), "application/octet-stream", "COMPRESSIONS.JSON");
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }       
     }
 }
