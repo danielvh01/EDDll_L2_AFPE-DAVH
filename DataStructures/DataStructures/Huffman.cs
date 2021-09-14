@@ -113,7 +113,7 @@ namespace DataStructures
                 int cont = 1;
                 char character = text[0];
                 text = text.Remove(0, 1);
-                for(int i = 0; i < text.Length; i++)
+                for(int i = text.Length - 1; i >= 0; i--)
                 {
                     if(text[i] == character)
                     {
@@ -199,6 +199,10 @@ namespace DataStructures
                     for(int j = 0; j < nodes.Length; j++)
                     {
                         var node = nodes.Get(j);
+                        while(node.binary_value.Length > binText.Length)
+                        {
+                            binText += 0;
+                        }
                         if (binText.Substring(0, node.binary_value.Length) == node.binary_value)
                         {
                             result += node.value;

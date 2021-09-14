@@ -113,7 +113,18 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         string textDecompressed = decompress.Decompress(content);
 
-                        return File(textDecompressed, "application/octet-stream", objFile.FILE.FileName + ".txt");
+                        string OriginalFileName = "";
+                        foreach(var compression in Singleton.Instance.compressions)
+                        {
+                            string fileOriginalName = compression.CompressedFileName_Route.Substring(0, compression.CompressedFileName_Route.IndexOf("--"));
+                            if (fileOriginalName == objFile.FILE.FileName)
+                            {
+                                OriginalFileName = compression.originalFileName;
+                                break;
+                            }
+                        }
+                        System.IO.File.WriteAllText(OriginalFileName, textDecompressed);
+                        return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
                     }
                     else
                     {
