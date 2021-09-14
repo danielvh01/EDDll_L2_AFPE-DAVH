@@ -112,7 +112,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         Huffman decompress = new Huffman();
 
-                        byte[] textDecompressed = decompress.Compress(Encoding.UTF8.GetString(content));
+                        string textDecompressed = decompress.Decompress(content);
 
                         return File(textDecompressed, "application/octet-stream", objFile.FILE.FileName + ".txt");
                     }
