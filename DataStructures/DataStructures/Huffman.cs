@@ -74,7 +74,7 @@ namespace DataStructures
                 int number = x.frecuency;
                 for(int j = 0; j < bytesPerChar; j++)
                 {
-                    result[2 + character + (bytesPerChar - j)] = Convert.ToByte(Convert.ToChar(number % 256));
+                    result[1 + character + (bytesPerChar - j)] = Convert.ToByte(Convert.ToChar(number % 256));
                     number = number / 256;
                 }
             }
@@ -94,11 +94,7 @@ namespace DataStructures
 
         private void buildBinaryCodes(HuffmanNode root)
         {
-            if(root.leaf)
-            {
-                nodes.Find(root).binary_value = root.binary_value;
-            }
-            else
+            if(!root.leaf)
             {
                 root.left.binary_value = root.binary_value + 0;
                 root.rigth.binary_value = root.binary_value + 1;
@@ -164,8 +160,9 @@ namespace DataStructures
             int bytesPerChar = Convert.ToInt32(compressText[0]);
             var separator = Convert.ToByte(Convert.ToChar(0));
             int index = 1;
-
+            int cantLetters = 0;
             heap = new Heap<HuffmanNode>(compressText.Length);
+
             while (compressText[index] != separator)
             {
                 char letter = Convert.ToChar(compressText[index]);
@@ -174,7 +171,10 @@ namespace DataStructures
                 {
                     frecuency += Convert.ToInt32(compressText[index + (bytesPerChar - i)]) * Convert.ToInt32(Math.Pow(256, i));
                 }
-                heap.insertKey(new HuffmanNode(letter, frecuency, true), frecuency.ToString());
+                cantLetters += frecuency;
+                var node = new HuffmanNode(letter, frecuency, true);
+                nodes.InsertAtEnd(node);
+                heap.insertKey(node, frecuency.ToString());
                 index += 1 + bytesPerChar;
             }
 
@@ -185,9 +185,29 @@ namespace DataStructures
             buildBinaryCodes(rootNode);
 
             string result = "";
+            string binText = "";
             for(int i = index + 1; i < compressText.Length; i++)
             {
-                result += byteToBinaryString(compressText[i]);
+                binText += byteToBinaryString(compressText[i]);
+            }
+            bool find;
+            for (int i = 0; i < cantLetters; i++)
+            {
+                find = true;
+                while(find)
+                {
+                    for(int j = 0; j < nodes.Length; j++)
+                    {
+                        var node = nodes.Get(j);
+                        if (binText.Substring(0, node.binary_value.Length) == node.binary_value)
+                        {
+                            result += node.value;
+                            binText = binText.Remove(0, node.binary_value.Length);
+                            find = false;
+                            break;
+                        }
+                    }
+                }
             }
             return result;
         }
