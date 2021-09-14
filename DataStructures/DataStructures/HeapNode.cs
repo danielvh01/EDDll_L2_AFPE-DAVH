@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DataStructures
 {
-    internal class HeapNode<T> : IComparable where T : IComparable
+    internal class HeapNode<T> : IComparable
     {
         public string priority;
         public T value { get; set; }
@@ -19,10 +19,10 @@ namespace DataStructures
             priority = p;
         }
 
-        public int CompareTo(Object obj)
+        public int CompareTo(object obj)
         {
-            var comparer = ((HeapNode<T>)obj).value;
-            return comparer.CompareTo(value);
+            var comparer = ((HeapNode<T>)obj).priority;
+            return comparer.CompareTo(priority);
         }
 
     }
