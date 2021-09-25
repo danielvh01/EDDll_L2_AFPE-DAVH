@@ -6,10 +6,10 @@ namespace DataStructures
 {
     public class LZW
     {
-        private Dictionary<string, int> dictionary;
+        private Dictionary<int, string> dictionary;
         public LZW() 
         {
-            dictionary = new Dictionary<string, int>();
+            dictionary = new Dictionary<int, string>();
         }
 
         private byte binaryToByte(string binaryByte)
@@ -47,7 +47,12 @@ namespace DataStructures
 
         public string Decompression(byte[] compressedText)
         {
-
+            int bytePerCharacter = Convert.ToInt32(compressedText[0]);
+            int alphabethLength = Convert.ToInt32(compressedText[1]);
+            for(int i = 0; i < alphabethLength; i++)
+            {
+                dictionary.Add(i, );
+            }
         }
 
     }
