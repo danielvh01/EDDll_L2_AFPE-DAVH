@@ -80,16 +80,6 @@ namespace DataStructures
             return result;
         }
 
-        private int binaryToInt(string Btext)
-        {
-            int result = 0;
-            for (int i = Btext.Length-1; i >= 0; i--)
-            {
-                result += Convert.ToInt32(Btext.Substring((Btext.Length - 1) - i,1)) * Convert.ToInt32(Math.Pow(2, i));
-            }
-            return result;
-        }
-
 
         public byte[] Compress(string text)
         {
