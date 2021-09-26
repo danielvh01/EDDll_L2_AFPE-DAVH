@@ -53,7 +53,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         byte [] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
-                        Huffman compressor = new Huffman();
+                        IHuffmanCompressor compressor = new Huffman();
 
                         byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
 
@@ -62,9 +62,9 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         {
                             originalFileName = objFile.FILE.FileName,
                             CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
-                            rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)),2).ToString(),
-                            compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())),2).ToString(),
-                            reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
+                            rateOfCompression = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)),2).ToString(),
+                            compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(textCompressed.Length)),2).ToString(),
+                            reductionPercentage = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%"
                         };
 
                         Singleton.Instance.compressions.InsertAtStart(compressObj);
