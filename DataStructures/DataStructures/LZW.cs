@@ -97,6 +97,7 @@ namespace DataStructures
                 previous = current;
             }
 
+            return result;
 
         }
 
