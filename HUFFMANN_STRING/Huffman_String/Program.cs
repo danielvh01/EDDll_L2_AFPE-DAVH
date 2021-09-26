@@ -9,7 +9,7 @@ namespace Huffman_String
     {
         static void Main(string[] args)
         {
-            Huffman compresor = new Huffman();
+            LZW compresor = new LZW();
             string text;
             do
             {
