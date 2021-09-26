@@ -15,9 +15,11 @@ namespace DataStructures
         private byte binaryToByte(string binaryByte)
         {
             int number = 0;
-            for (int i = 0; i < 8; i++)
+            int cantBits = binaryByte.Length;
+            for (int i = cantBits; i >= 0; i++)
             {
-                number += int.Parse(Math.Pow(2, 7 - i).ToString()) * int.Parse(binaryByte.Substring(i, 1));
+                number += int.Parse(Math.Pow(2, i).ToString()) * int.Parse(binaryByte.Substring(0, 1));
+                binaryByte = binaryByte.Remove(0, 1);
             }
             return byte.Parse(number.ToString());
         }
@@ -41,18 +43,24 @@ namespace DataStructures
             result += numericValue / 2;
             numericValue = numericValue % 2;
             result += numericValue / 1;
-            numericValue = numericValue % 1;
             return result;
         }
 
         public string Decompression(byte[] compressedText)
         {
-            int bytePerCharacter = Convert.ToInt32(compressedText[0]);
+            string result = "";
+            int bytesPerCharacter = Convert.ToInt32(compressedText[0]);
             int alphabethLength = Convert.ToInt32(compressedText[1]);
             for(int i = 0; i < alphabethLength; i++)
             {
-                dictionary.Add(i, );
+                dictionary.Add(i, Convert.ToString(compressedText[2 + i]));
             }
+            string binaryText = "";
+            for(int i = 2 + alphabethLength; i < compressedText.Length; i++)
+            {
+                binaryText += byteToBinaryString(compressedText[i]);
+            }
+            string 
         }
 
     }
