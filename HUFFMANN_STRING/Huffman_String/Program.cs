@@ -7,9 +7,10 @@ namespace Huffman_String
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
-            Huffman compresor = new Huffman();
+            LZW compresor = new LZW();
             string text;
             do
             {
@@ -18,7 +19,7 @@ namespace Huffman_String
                 if(text.Length == 0)
                 {
                     Console.WriteLine("Error, el texto esta vacio por favor intentelo de nuevo");
-                }
+                }                
             }
             while (text.Length == 0);
             Console.WriteLine("El mensaje comprimido es el siguiente:");
