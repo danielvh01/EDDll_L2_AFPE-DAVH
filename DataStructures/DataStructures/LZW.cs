@@ -60,7 +60,7 @@ namespace DataStructures
         private string intToBinaryString(int numericValue, int cantBytes)
         {
             string result = "";
-            for (int i = cantBytes; i >= 0; i--)
+            for (int i = cantBytes-1; i >= 0; i--)
             {
                 int divisor = Convert.ToInt32(Math.Pow(2, i));
                 result += numericValue / divisor;
@@ -134,9 +134,9 @@ namespace DataStructures
                         break;
                     }
                 }
-                for (int i = 2 + dictionaryCharCant; i < binaryCode.Length / 8; i++)
+                for (int i = 0; i < binaryCode.Length / 8; i++)
                 {
-                    result[i] = Convert.ToByte(binaryToInt(binaryCode.Substring(i * 8, 8)));
+                    result[i + 2 + dictionaryCharCant] = Convert.ToByte(binaryToInt(binaryCode.Substring(i * 8, 8)));
                 }
                 return result;
 

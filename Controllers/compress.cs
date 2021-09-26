@@ -30,8 +30,8 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
         {
             public IFormFile FILE { get; set; }
         }        
-        [HttpPost("compress/{name}")]        
-        public  IActionResult Post(string name, [FromForm] FileUPloadAPI? objFile)
+        [HttpPost("{method}/compress/{name}")]        
+        public  IActionResult Post(string method, string name, [FromForm] FileUPloadAPI? objFile)
         {            
             try
             {
@@ -53,23 +53,51 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         byte [] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
-                        Huffman compressor = new Huffman();
-
-                        byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
-
-
-                        CompressModel compressObj = new CompressModel
+                        if (method == "huffman")
                         {
-                            originalFileName = objFile.FILE.FileName,
-                            CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
-                            rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)),2).ToString(),
-                            compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())),2).ToString(),
-                            reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
-                        };
+                            Huffman compressor = new Huffman();
 
-                        Singleton.Instance.compressions.InsertAtStart(compressObj);
+                            byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
 
-                        return File(textCompressed, "application/text", name + ".huff");
+
+
+                            CompressModel compressObj = new CompressModel
+                            {
+                                originalFileName = objFile.FILE.FileName,
+                                CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
+                                rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)), 2).ToString(),
+                                compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())), 2).ToString(),
+                                reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
+                            };
+
+                            Singleton.Instance.compressions.InsertAtStart(compressObj);
+
+                            return File(textCompressed, "application/text", name + ".huff");
+                        }
+                        else if (method == "lzw")
+                        {
+                            LZW compressor = new LZW();
+
+                            byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
+
+
+
+                            CompressModel compressObj = new CompressModel
+                            {
+                                originalFileName = objFile.FILE.FileName,
+                                CompressedFileName_Route = name + ".lzw" + "-->" + _environment.WebRootPath + "\\Upload\\",
+                                rateOfCompression = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)), 2).ToString(),
+                                compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(textCompressed.Length)), 2).ToString(),
+                                reductionPercentage = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
+                            };
+
+                            Singleton.Instance.compressions.InsertAtStart(compressObj);
+
+                            return File(textCompressed, "application/text", name + ".lzw");
+                        }
+                        else {
+                            return StatusCode(500);
+                        }
                     }
                     else
                     {
@@ -109,22 +137,50 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         }
                         byte[] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
-                        Huffman decompress = new Huffman();
 
-                        string textDecompressed = decompress.Decompress(content);
 
-                        string OriginalFileName = "";
-                        foreach(var compression in Singleton.Instance.compressions)
+                        if (objFile.FILE.FileName.EndsWith("huff"))
                         {
-                            string fileOriginalName = compression.CompressedFileName_Route.Substring(0, compression.CompressedFileName_Route.IndexOf("--"));
-                            if (fileOriginalName == objFile.FILE.FileName)
+                            Huffman decompress = new Huffman();
+
+                            string textDecompressed = decompress.Decompress(content);
+
+                            string OriginalFileName = "";
+                            foreach (var compression in Singleton.Instance.compressions)
                             {
-                                OriginalFileName = compression.originalFileName;
-                                break;
+                                string fileOriginalName = compression.CompressedFileName_Route.Substring(0, compression.CompressedFileName_Route.IndexOf("--"));
+                                if (fileOriginalName == objFile.FILE.FileName)
+                                {
+                                    OriginalFileName = compression.originalFileName;
+                                    break;
+                                }
                             }
+                            System.IO.File.WriteAllText(OriginalFileName, textDecompressed);
+                            return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
                         }
-                        System.IO.File.WriteAllText(OriginalFileName, textDecompressed);
-                        return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
+                        else if (objFile.FILE.FileName.EndsWith("lzw"))
+                        {
+                            LZW decompress = new LZW();
+
+                            string textDecompressed = decompress.Decompression(content);
+
+                            string OriginalFileName = "";
+                            foreach (var compression in Singleton.Instance.compressions)
+                            {
+                                string fileOriginalName = compression.CompressedFileName_Route.Substring(0, compression.CompressedFileName_Route.IndexOf("--"));
+                                if (fileOriginalName == objFile.FILE.FileName)
+                                {
+                                    OriginalFileName = compression.originalFileName;
+                                    break;
+                                }
+                            }
+                            System.IO.File.WriteAllText(OriginalFileName, textDecompressed);
+                            return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
+                        }
+                        else
+                        {
+                            return StatusCode(500);
+                        }
                     }
                     else
                     {
