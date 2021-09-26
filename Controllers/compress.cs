@@ -141,7 +141,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         if (objFile.FILE.FileName.EndsWith("huff"))
                         {
-                            Huffman decompress = new Huffman();
+                            IHuffmanCompressor decompress = new Huffman();
 
                             string textDecompressed = decompress.Decompress(content);
 
@@ -160,7 +160,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         }
                         else if (objFile.FILE.FileName.EndsWith("lzw"))
                         {
-                            LZW decompress = new LZW();
+                            ILZWCompressor decompress = new LZW();
 
                             string textDecompressed = decompress.Decompression(content);
 
