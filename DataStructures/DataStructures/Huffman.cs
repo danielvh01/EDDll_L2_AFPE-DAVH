@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataStructures
 {
-    public class Huffman
+    public class Huffman : IHuffmanCompressor
     {
         internal Heap<HuffmanNode> heap;
         internal DoubleLinkedList<HuffmanNode> nodes;
