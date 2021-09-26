@@ -76,13 +76,14 @@ namespace DataStructures
             int dictionaryCharCant = 0;
             string compressed = string.Empty;
             byte[] result = new byte[0];
+            
             if (text != "" || text != null || text.Length != 0)
             {
                 for (int i = 0; i < text.Length; i++)
                 {
                     if (!dictionaryC.ContainsKey(text[i].ToString()))
                     {
-                        dictionaryC.Add(text[i].ToString(), i);
+                        dictionaryC.Add(text[i].ToString(), dictionaryC.Count + 1);
                     }
                 }
                 dictionaryCharCant = dictionaryC.Count;
@@ -98,7 +99,7 @@ namespace DataStructures
                     else
                     {
                         compressed += dictionaryC[w] + "-";
-                        dictionaryC.Add(wk, dictionaryC.Count);
+                        dictionaryC.Add(wk, dictionaryC.Count + 1);
                         w = k.ToString();
                     }
                 }
@@ -106,7 +107,7 @@ namespace DataStructures
                 {
                     compressed += dictionaryC[w];
                 }
-                cantByte = Convert.ToInt32(Math.Log2(dictionaryC.Count));
+                cantByte = Convert.ToInt32(Math.Round(Math.Log2(dictionaryC.Count), MidpointRounding.ToPositiveInfinity));
                 string[] code = compressed.Split("-");
                 for (int i = 0; i < code.Length; i++)
                 {
@@ -154,7 +155,7 @@ namespace DataStructures
             int alphabethLength = Convert.ToInt32(compressedText[1]);
             for(int i = 0; i < alphabethLength; i++)
             {
-                dictionary.Add(i, Convert.ToString(compressedText[2 + i]));
+                dictionary.Add(i + 1, Convert.ToString(Convert.ToChar(compressedText[2 + i])));
             }
             string binaryText = "";
             for(int i = 2 + alphabethLength; i < compressedText.Length; i++)
@@ -169,22 +170,29 @@ namespace DataStructures
             previous = binaryToInt(binaryText.Substring(0, bytesPerCharacter));
             character = dictionary[Convert.ToInt32(previous)];
             result += character;
-            for(int i = 1; i < binaryText.Length/bytesPerCharacter; i++)
+            for(int i = 1; i < binaryText.Length/bytesPerCharacter && binaryText.Length > bytesPerCharacter; i++)
             {
                 current = binaryToInt(binaryText.Substring(i*bytesPerCharacter, bytesPerCharacter));
-                if(!dictionary.ContainsKey(current))
+                if (current!= 0)
                 {
-                    chain = dictionary[Convert.ToInt32(previous)];
-                    chain = chain + character;
+                    if (!dictionary.ContainsKey(current))
+                    {
+                        chain = dictionary[Convert.ToInt32(previous)];
+                        chain = chain + character;
+                    }
+                    else
+                    {
+                        chain = dictionary[Convert.ToInt32(current)];
+                    }
+                    result += chain;
+                    character = chain.Substring(0, 1);
+                    dictionary.Add(dictionary.Count + 1, dictionary[Convert.ToInt32(previous)] + character);
+                    previous = current; 
                 }
                 else
                 {
-                    chain = dictionary[Convert.ToInt32(current)];
+                    break;
                 }
-                result += chain;
-                character = chain.Substring(0,1);
-                dictionary.Add(dictionary.Count, dictionary[Convert.ToInt32(previous)] + character);
-                previous = current;
             }
             return result;
 
