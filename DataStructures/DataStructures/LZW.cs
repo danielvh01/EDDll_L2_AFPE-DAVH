@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataStructures
 {
-    public class LZW
+    public class LZW : ILZWCompressor
     {
         private Dictionary<int, string> dictionary;
         private Dictionary<string, int> dictionaryC;
