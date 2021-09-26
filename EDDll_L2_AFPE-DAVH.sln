@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDDll_L2_AFPE-DAVH", "EDDll
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStructures", "DataStructures\DataStructures\DataStructures.csproj", "{90FD816C-2131-4025-ABB1-1CD5DD69347E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huffman_String", "HUFFMANN_STRING\Huffman_String\Huffman_String.csproj", "{854CB9DA-8098-4E40-8728-011E316A1987}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LZW_String", "HUFFMANN_STRING\Huffman_String\LZW_String.csproj", "{854CB9DA-8098-4E40-8728-011E316A1987}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
