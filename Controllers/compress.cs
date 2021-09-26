@@ -109,7 +109,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         }
                         byte[] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
-                        Huffman decompress = new Huffman();
+                        IHuffmanCompressor decompress = new Huffman();
 
                         string textDecompressed = decompress.Decompress(content);
 
