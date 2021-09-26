@@ -23,6 +23,17 @@ namespace DataStructures
             }
             return byte.Parse(number.ToString());
         }
+        private int binaryToInt(string binaryByte)
+        {
+            int number = 0;
+            int cantBits = binaryByte.Length;
+            for (int i = cantBits; i >= 0; i++)
+            {
+                number += int.Parse(Math.Pow(2, i).ToString()) * int.Parse(binaryByte.Substring(0, 1));
+                binaryByte = binaryByte.Remove(0, 1);
+            }
+            return number;
+        }
 
         private string byteToBinaryString(byte x)
         {
@@ -45,7 +56,7 @@ namespace DataStructures
             result += numericValue / 1;
             return result;
         }
-
+        
         public string Decompression(byte[] compressedText)
         {
             string result = "";
@@ -60,7 +71,33 @@ namespace DataStructures
             {
                 binaryText += byteToBinaryString(compressedText[i]);
             }
-            string 
+            int previous;
+            int current;
+            string chain = "";
+            string character = "";
+
+            previous = binaryToInt(binaryText.Substring(0, bytesPerCharacter));
+            character = dictionary[Convert.ToInt32(previous)];
+            result += character;
+            for(int i = 1; i < binaryText.Length/bytesPerCharacter; i++)
+            {
+                current = binaryToInt(binaryText.Substring(i*bytesPerCharacter, bytesPerCharacter));
+                if(!dictionary.ContainsKey(current))
+                {
+                    chain = dictionary[Convert.ToInt32(previous)];
+                    chain = chain + character;
+                }
+                else
+                {
+                    chain = dictionary[Convert.ToInt32(current)];
+                }
+                result += chain;
+                character = chain.Substring(0,1);
+                dictionary.Add(dictionary.Count, dictionary[Convert.ToInt32(previous)] + character);
+                previous = current;
+            }
+
+
         }
 
     }
