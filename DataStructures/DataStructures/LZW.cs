@@ -11,8 +11,8 @@ namespace DataStructures
         public LZW() 
         {
             dictionary = new Dictionary<int, string>();
-            dictionaryC = new Dictionary<string, int>();
-        }
+            dictionaryC = new Dictionary<string,int> ();
+    }
 
         private byte binaryToByte(string binaryByte)
         {
@@ -57,25 +57,22 @@ namespace DataStructures
             return result;
         }
 
-        private string intToBinaryString(int numericValue, int cantBytes)
-        {
-            string result = "";
-            for (int i = cantBytes; i >= 0; i--)
-            {
-                int divisor = Convert.ToInt32(Math.Pow(2, i));
-                result += numericValue / divisor;
-                numericValue = numericValue % divisor;
-            }
-            return result;
-        }
+        //public string Decompression(byte[] compressedText)
+        //{
+        //    int bytePerCharacter = Convert.ToInt32(compressedText[0]);
+        //    int alphabethLength = Convert.ToInt32(compressedText[1]);
+        //    for(int i = 0; i < alphabethLength; i++)
+        //    {
+        //        dictionary.Add(i, );
+        //    }
+        //}
 
         public byte[] Compress(string text)
         {
-            string binaryCode = "";
             int cantByte = 0;
             int dictionaryCharCant = 0;
             string compressed = string.Empty;
-            byte[] result = new byte[0];
+            byte[] result = new byte[10];
             if (text != "" || text != null || text.Length != 0)
             {
                 for (int i = 0; i < text.Length; i++)
@@ -107,86 +104,13 @@ namespace DataStructures
                     compressed += dictionaryC[w];
                 }
                 cantByte = Convert.ToInt32(Math.Log2(dictionaryC.Count));
-                string[] code = compressed.Split("-");
-                for (int i = 0; i < code.Length; i++)
-                {
-                    binaryCode += intToBinaryString(int.Parse(code[i]), cantByte);
-                }
-                int cant = 8 - binaryCode.Length % 8;
-                while (cant > 0)
-                {
-                    binaryCode += 0;
-                    cant--;
-                }
-                result = new byte[2 + dictionaryCharCant + (binaryCode.Length / 8)];
-                result[0] = byte.Parse(cantByte.ToString());
-                result[1] = byte.Parse(dictionaryCharCant.ToString());
-                int count = 0;
-                foreach (var x in dictionaryC.Keys)
-                {
-                    if (count < dictionaryCharCant)
-                    {
-                        result[2 + count] = Convert.ToByte(char.Parse(x));
-                        count++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                for (int i = 2 + dictionaryCharCant; i < binaryCode.Length / 8; i++)
-                {
-                    result[i] = Convert.ToByte(binaryToInt(binaryCode.Substring(i * 8, 8)));
-                }
+
                 return result;
 
             }
-            else
-            {
+            else {
                 return result;
             };
-
-        }
-        public string Decompression(byte[] compressedText)
-        {
-            string result = "";
-            int bytesPerCharacter = Convert.ToInt32(compressedText[0]);
-            int alphabethLength = Convert.ToInt32(compressedText[1]);
-            for(int i = 0; i < alphabethLength; i++)
-            {
-                dictionary.Add(i, Convert.ToString(compressedText[2 + i]));
-            }
-            string binaryText = "";
-            for(int i = 2 + alphabethLength; i < compressedText.Length; i++)
-            {
-                binaryText += byteToBinaryString(compressedText[i]);
-            }
-            int previous;
-            int current;
-            string chain = "";
-            string character = "";
-
-            previous = binaryToInt(binaryText.Substring(0, bytesPerCharacter));
-            character = dictionary[Convert.ToInt32(previous)];
-            result += character;
-            for(int i = 1; i < binaryText.Length/bytesPerCharacter; i++)
-            {
-                current = binaryToInt(binaryText.Substring(i*bytesPerCharacter, bytesPerCharacter));
-                if(!dictionary.ContainsKey(current))
-                {
-                    chain = dictionary[Convert.ToInt32(previous)];
-                    chain = chain + character;
-                }
-                else
-                {
-                    chain = dictionary[Convert.ToInt32(current)];
-                }
-                result += chain;
-                character = chain.Substring(0,1);
-                dictionary.Add(dictionary.Count, dictionary[Convert.ToInt32(previous)] + character);
-                previous = current;
-            }
-            return result;
 
         }
 
