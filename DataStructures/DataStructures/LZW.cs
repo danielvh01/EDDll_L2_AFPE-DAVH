@@ -96,7 +96,7 @@ namespace DataStructures
                 dictionary.Add(dictionary.Count, dictionary[Convert.ToInt32(previous)] + character);
                 previous = current;
             }
-
+            return result;
 
         }
 
