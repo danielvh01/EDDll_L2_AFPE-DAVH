@@ -55,7 +55,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         if (method == "huffman")
                         {
-                            Huffman compressor = new Huffman();
+                            IHuffmanCompressor compressor = new Huffman();
 
                             byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
 
@@ -65,9 +65,9 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                             {
                                 originalFileName = objFile.FILE.FileName,
                                 CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
-                                rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)), 2).ToString(),
-                                compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())), 2).ToString(),
-                                reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
+                                rateOfCompression = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)), 2).ToString(),
+                                compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(textCompressed.Length)), 2).ToString(),
+                                reductionPercentage = Math.Round((Convert.ToDouble(textCompressed.Length) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
                             };
 
                             Singleton.Instance.compressions.InsertAtStart(compressObj);
@@ -76,7 +76,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         }
                         else if (method == "lzw")
                         {
-                            LZW compressor = new LZW();
+                            ILZWCompressor compressor = new LZW();
 
                             byte[] textCompressed = compressor.Compress(content);
 
@@ -141,7 +141,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         if (objFile.FILE.FileName.EndsWith("huff"))
                         {
-                            Huffman decompress = new Huffman();
+                            IHuffmanCompressor decompress = new Huffman();
 
                             string textDecompressed = decompress.Decompress(content);
 
@@ -160,7 +160,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         }
                         else if (objFile.FILE.FileName.EndsWith("lzw"))
                         {
-                            LZW decompress = new LZW();
+                            ILZWCompressor decompress = new LZW();
 
                             byte[] textDecompressed = decompress.Decompression(content);
 
