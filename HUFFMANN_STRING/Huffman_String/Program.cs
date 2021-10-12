@@ -21,8 +21,13 @@ namespace Huffman_String
                 }
             }
             while (text.Length == 0);
+            byte[] textToCompress = new byte[text.Length];
+            for(int i = 0;i < text.Length; i++)
+            {
+                textToCompress[i] = (byte)text[i];
+            }
             Console.WriteLine("El mensaje comprimido es el siguiente:");
-            byte[] compress = compresor.Compress(text);
+            byte[] compress = compresor.Compress(textToCompress);
             Console.WriteLine(Encoding.UTF8.GetString(compress));
             Console.ReadLine();
         }

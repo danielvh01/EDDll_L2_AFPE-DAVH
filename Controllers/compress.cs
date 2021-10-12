@@ -78,7 +78,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         {
                             LZW compressor = new LZW();
 
-                            byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
+                            byte[] textCompressed = compressor.Compress(content);
 
 
 
@@ -162,7 +162,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         {
                             LZW decompress = new LZW();
 
-                            string textDecompressed = decompress.Decompression(content);
+                            byte[] textDecompressed = decompress.Decompression(content);
 
                             string OriginalFileName = "";
                             foreach (var compression in Singleton.Instance.compressions)
@@ -174,7 +174,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                                     break;
                                 }
                             }
-                            System.IO.File.WriteAllText(OriginalFileName, textDecompressed);
+                            System.IO.File.WriteAllBytes(OriginalFileName, textDecompressed);
                             return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
                         }
                         else

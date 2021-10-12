@@ -69,7 +69,7 @@ namespace DataStructures
             return result;
         }
 
-        public byte[] Compress(string text)
+        public byte[] Compress(byte[] text)
         {
             string binaryCode = "";
             int cantByte = 0;
@@ -77,13 +77,13 @@ namespace DataStructures
             string compressed = string.Empty;
             byte[] result = new byte[0];
             
-            if (text != "" || text != null || text.Length != 0)
+            if (text != null || text.Length != 0)
             {
                 for (int i = 0; i < text.Length; i++)
                 {
-                    if (!dictionaryC.ContainsKey(text[i].ToString()))
+                    if (!dictionaryC.ContainsKey(Convert.ToChar(text[i]).ToString()))
                     {
-                        dictionaryC.Add(text[i].ToString(), dictionaryC.Count + 1);
+                        dictionaryC.Add(Convert.ToChar(text[i]).ToString(), dictionaryC.Count + 1);
                     }
                 }
                 dictionaryCharCant = dictionaryC.Count;
@@ -148,7 +148,7 @@ namespace DataStructures
             };
 
         }
-        public string Decompression(byte[] compressedText)
+        public byte[] Decompression(byte[] compressedText)
         {
             string result = "";
             int bytesPerCharacter = Convert.ToInt32(compressedText[0]);
@@ -194,7 +194,12 @@ namespace DataStructures
                     break;
                 }
             }
-            return result;
+            byte[] textDecompressed = new byte[result.Length];
+            for (int i = 0; i < result.Length; i++)
+            {
+                textDecompressed[i] = (byte)result[i];
+            }
+            return textDecompressed;
 
         }
 
