@@ -20,41 +20,7 @@ namespace DataStructures
             int result = 0;
             for (int i = Btext.Length - 1; i >= 0; i--)
             {
-                result += Convert.ToInt32(Btext.Substring((Btext.Length - 1) - i, 1)) * Convert.ToInt32(Math.Pow(2, i));
-            }
-            return result;
-        }
-
-        private string byteToBinaryString(byte x)
-        {
-            int numericValue = x;
-            string result = "";
-            result += numericValue / 128;
-            numericValue = numericValue % 128;
-            result += numericValue / 64;
-            numericValue = numericValue % 64;
-            result += numericValue / 32;
-            numericValue = numericValue % 32;
-            result += numericValue / 16;
-            numericValue = numericValue % 16;
-            result += numericValue / 8;
-            numericValue = numericValue % 8;
-            result += numericValue / 4;
-            numericValue = numericValue % 4;
-            result += numericValue / 2;
-            numericValue = numericValue % 2;
-            result += numericValue / 1;
-            return result;
-        }
-
-        private string intToBinaryString(int numericValue, int cantBytes)
-        {
-            string result = "";
-            for (int i = cantBytes-1; i >= 0; i--)
-            {
-                int divisor = Convert.ToInt32(Math.Pow(2, i));
-                result += numericValue / divisor;
-                numericValue = numericValue % divisor;
+                result += Convert.ToInt32(Btext.Substring((Btext.Length - 1) - i, 1)) * (int)(Math.Pow(2, i));
             }
             return result;
         }
@@ -97,11 +63,11 @@ namespace DataStructures
                 {
                     compressed += dictionaryC[w];
                 }
-                cantByte = Convert.ToInt32(Math.Round(Math.Log2(dictionaryC.Count), MidpointRounding.ToPositiveInfinity));
+                cantByte = (int)Math.Round(Math.Log2(dictionaryC.Count), MidpointRounding.ToPositiveInfinity);
                 string[] code = compressed.Split("-");
                 for (int i = 0; i < code.Length; i++)
                 {
-                    binaryCode += intToBinaryString(int.Parse(code[i]), cantByte);
+                    binaryCode += Convert.ToString(Convert.ToInt32(code[i]),2).PadLeft(cantByte,'0');
                 }
                 int cant = 8 - binaryCode.Length % 8;
                 while (cant > 0)
@@ -117,7 +83,7 @@ namespace DataStructures
                 {
                     if (count < dictionaryCharCant)
                     {
-                        result[2 + count] = (byte)(char.Parse(x));
+                        result[2 + count] = (byte)(x[0]);
                         count++;
                     }
                     else
@@ -146,12 +112,13 @@ namespace DataStructures
             
             for (int i = 0; i < alphabethLength; i++)
             {
-                dictionary.Add(i + 1, Convert.ToString(Convert.ToChar(compressedText[2 + i])));
+                dictionary.Add(i + 1, ((char)(compressedText[2 + i])).ToString());
             }
             string binaryText = "";
             for(int i = 2 + alphabethLength; i < compressedText.Length; i++)
             {
-                binaryText += byteToBinaryString(compressedText[i]);
+                string x = Convert.ToString(compressedText[i], 2);
+                binaryText += x.PadLeft(8, '0');
             }
             int previous;
             int current;
@@ -173,7 +140,7 @@ namespace DataStructures
                     }
                     else
                     {
-                        chain = dictionary[Convert.ToInt32(current)];
+                        chain = dictionary[current];
                     }
                     result += chain;
                     character = chain.Substring(0,1);
