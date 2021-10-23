@@ -53,9 +53,9 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                         byte [] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
-                        Huffman compressor = new Huffman();
+                        HuffmanTest compressor = new HuffmanTest();
 
-                        byte[] textCompressed = compressor.Compress(Encoding.UTF8.GetString(content));
+                        byte[] textCompressed = compressor.Compress(content);
 
 
                         CompressModel compressObj = new CompressModel
