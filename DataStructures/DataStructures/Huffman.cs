@@ -9,7 +9,7 @@ namespace DataStructures
         internal Heap<HuffmanNode> heap;
         internal DoubleLinkedList<HuffmanNode> nodes;
         int bytesPerChar = 1;
-
+        int tempLength = 0;
         public Huffman()
         {
             nodes = new DoubleLinkedList<HuffmanNode>();
@@ -63,6 +63,7 @@ namespace DataStructures
         {
             byte[] result;
             byte[] content = CompressContent(text);
+            tempLength = content.Length;
             int lenghtFrecuencys = (bytesPerChar + 1) * nodes.Length;
             result = new byte[2 + lenghtFrecuencys + content.Length];
             result[0] = Convert.ToByte(Convert.ToChar(bytesPerChar));
@@ -80,6 +81,11 @@ namespace DataStructures
             }
             content.CopyTo(result, 2 + lenghtFrecuencys);
             return result;
+        }
+
+        public int getCompressedLength()
+        {
+            return tempLength;
         }
 
         private byte binaryToByte(string binaryByte)

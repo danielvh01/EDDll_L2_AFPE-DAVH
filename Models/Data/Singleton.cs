@@ -13,7 +13,7 @@ namespace EDDll_L2_AFPE_DAVH.Models.Data
     {                
         private readonly static Singleton _instance = new Singleton();
         public string TCompressions = "";
-        public DoubleLinkedList<CompressModel> compressions;
+        public DoubleLinkedList<CompressModel> compressions;        
         private Singleton()
         {
             compressions = new DoubleLinkedList<CompressModel>();
