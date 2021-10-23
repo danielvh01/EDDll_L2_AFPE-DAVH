@@ -8,7 +8,7 @@ namespace DataStructures
     {
         const int MAX_TREE_HT = 100;
 
-        string[] binaryCodes;
+        
 
         HuffmanHeap heap;
         HuffmanHeapNode root;
@@ -68,6 +68,11 @@ namespace DataStructures
             }
             if(isLeaf(root))
             {
+                root.binaryCode = "";
+                for(int i = 0; i < top; i++)
+                {
+                    root.binaryCode += arr[i].ToString();
+                }
 
             }
         }

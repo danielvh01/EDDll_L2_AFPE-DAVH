@@ -58,16 +58,16 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         byte[] textCompressed = compressor.Compress(content);
 
 
-                        CompressModel compressObj = new CompressModel
-                        {
-                            originalFileName = objFile.FILE.FileName,
-                            CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
-                            rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)),2).ToString(),
-                            compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())),2).ToString(),
-                            reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
-                        };
+                        //CompressModel compressObj = new CompressModel
+                        //{
+                        //    originalFileName = objFile.FILE.FileName,
+                        //    CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
+                        //    rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)),2).ToString(),
+                        //    compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())),2).ToString(),
+                        //    reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
+                        //};
 
-                        Singleton.Instance.compressions.InsertAtStart(compressObj);
+                        //Singleton.Instance.compressions.InsertAtStart(compressObj);
 
                         return File(textCompressed, "application/text", name + ".huff");
                     }

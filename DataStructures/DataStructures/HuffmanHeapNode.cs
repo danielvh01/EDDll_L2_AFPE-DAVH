@@ -10,6 +10,7 @@ namespace DataStructures
         internal int frecuencia;
         internal HuffmanHeapNode left;
         internal HuffmanHeapNode right;
+        internal string binaryCode;
 
         internal HuffmanHeapNode(char c, int f)
         {
