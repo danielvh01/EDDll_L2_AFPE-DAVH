@@ -33,8 +33,8 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
         [HttpPost("compress/{name}")]        
         public  IActionResult Post(string name, [FromForm] FileUPloadAPI? objFile)
         {            
-            try
-            {
+            //try
+            //{
                 if (objFile.FILE != null)
                 {
                     if (objFile.FILE.Length > 0)
@@ -58,18 +58,18 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         byte[] textCompressed = compressor.Compress(content);
 
 
-                        //CompressModel compressObj = new CompressModel
-                        //{
-                        //    originalFileName = objFile.FILE.FileName,
-                        //    CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
-                        //    rateOfCompression = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)),2).ToString(),
-                        //    compressionFactor = Math.Round((Convert.ToDouble(content.Length) / Convert.ToDouble(compressor.getCompressedLength())),2).ToString(),
-                        //    reductionPercentage = Math.Round((Convert.ToDouble(compressor.getCompressedLength()) / Convert.ToDouble(content.Length)) * 100, 2).ToString() + "%",
-                        //};
+                    CompressModel compressObj = new CompressModel
+                    {
+                        originalFileName = objFile.FILE.FileName,
+                        CompressedFileName_Route = name + ".huff" + "-->" + _environment.WebRootPath + "\\Upload\\",
+                        rateOfCompression = Math.Round((double)(textCompressed.Length / content.Length), 2).ToString(),
+                        compressionFactor = Math.Round((double)(content.Length / textCompressed.Length), 2).ToString(),
+                        reductionPercentage = Math.Round((double)(textCompressed.Length / content.Length) * 100, 2).ToString() + "%",
+                    };
 
-                        //Singleton.Instance.compressions.InsertAtStart(compressObj);
+                    Singleton.Instance.compressions.InsertAtStart(compressObj);
 
-                        return File(textCompressed, "application/text", name + ".huff");
+                    return File(textCompressed, "application/text", name + ".huff");
                     }
                     else
                     {
@@ -80,11 +80,11 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                 {
                     return StatusCode(500);
                 }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            //}
+            //catch
+            //{
+            //    return StatusCode(500);
+            //}
             
         }
 
@@ -109,9 +109,9 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         }
                         byte[] content = System.IO.File.ReadAllBytes(_environment.WebRootPath + "\\Upload\\" + uniqueFileName);
 
-                        Huffman decompress = new Huffman();
+                        HuffmanTest decompress = new HuffmanTest();
 
-                        string textDecompressed = decompress.Decompress(content);
+                        byte[] textDecompressed = decompress.Decompress(content);
 
                         string OriginalFileName = "";
                         foreach(var compression in Singleton.Instance.compressions)
@@ -123,8 +123,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                                 break;
                             }
                         }
-                        System.IO.File.WriteAllText(OriginalFileName, textDecompressed);
-                        return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
+                        return File(textDecompressed, "application/octet-stream", OriginalFileName);
                     }
                     else
                     {
