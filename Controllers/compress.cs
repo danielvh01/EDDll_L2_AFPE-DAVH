@@ -75,7 +75,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                             return File(textCompressed, "application/text", name + ".huff");
                         }
                         else if (method == "lzw")
-                        {
+                        {                            
                             ILZWCompressor compressor = new LZW();
 
                             byte[] textCompressed = compressor.Compress(content);
@@ -93,7 +93,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
 
                             Singleton.Instance.compressions.InsertAtStart(compressObj);
 
-                            return File(textCompressed, "application/text", name + ".lzw");
+                            return File(textCompressed, "application / text", name + ".lzw");
                         }
                         else {
                             return StatusCode(500);
@@ -173,9 +173,8 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                                     OriginalFileName = compression.originalFileName;
                                     break;
                                 }
-                            }
-                            System.IO.File.WriteAllBytes(OriginalFileName, textDecompressed);
-                            return File(System.IO.File.ReadAllBytes(OriginalFileName), "application/octet-stream", OriginalFileName);
+                            }                            
+                            return File(textDecompressed, "application/octet-stream", OriginalFileName);
                         }
                         else
                         {
