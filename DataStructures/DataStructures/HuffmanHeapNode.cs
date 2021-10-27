@@ -6,13 +6,13 @@ namespace DataStructures
 {
     internal class HuffmanHeapNode : IComparable
     {
-        internal char caracter;
+        internal byte caracter;
         internal int frecuencia;
         internal HuffmanHeapNode left;
         internal HuffmanHeapNode right;
         internal string binaryCode;
 
-        internal HuffmanHeapNode(char c, int f)
+        internal HuffmanHeapNode(byte c, int f)
         {
             caracter = c;
             frecuencia = f;

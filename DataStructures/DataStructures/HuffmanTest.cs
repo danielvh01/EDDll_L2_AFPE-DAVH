@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace DataStructures
@@ -8,7 +9,7 @@ namespace DataStructures
     {
         const int MAX_TREE_HT = 100;
 
-        List<HuffmanHeapNode> nodes = new List<HuffmanHeapNode>();
+        Dictionary<byte, string> codigos = new Dictionary<byte, string>();
 
         HuffmanHeap heap;
         HuffmanHeapNode root;
@@ -18,7 +19,7 @@ namespace DataStructures
             return (root.left == null) && (root.right == null);
         }
 
-        HuffmanHeap crearHeap(char[] datos, int[] frecuencias, int length)
+        HuffmanHeap crearHeap(byte[] datos, int[] frecuencias, int length)
         {
             heap = new HuffmanHeap(length);
 
@@ -32,7 +33,7 @@ namespace DataStructures
             return heap;
         }
 
-        HuffmanHeapNode buildTree(char[] datos, int[] frecuencias, int lenght)
+        HuffmanHeapNode buildTree(byte[] datos, int[] frecuencias, int lenght)
         {
             HuffmanHeapNode left, right, top;
 
@@ -43,7 +44,7 @@ namespace DataStructures
                 left = heap.extractMin();
                 right = heap.extractMin();
 
-                top = new HuffmanHeapNode('$', left.frecuencia + right.frecuencia);
+                top = new HuffmanHeapNode((byte)'$', left.frecuencia + right.frecuencia);
 
                 top.left = left;
                 top.right = right;
@@ -66,18 +67,18 @@ namespace DataStructures
                 arr[top] = 1;
                 codigosBinarios(root.right, arr, top + 1);
             }
-            if(isLeaf(root))
+            if (isLeaf(root))
             {
                 root.binaryCode = "";
-                for(int i = 0; i < top; i++)
+                for (int i = 0; i < top; i++)
                 {
                     root.binaryCode += arr[i].ToString();
                 }
-                nodes.Add(root);
+                codigos.Add((byte)root.caracter, root.binaryCode);
             }
         }
 
-        void HuffmanCodes(char[] datos, int[] frecuencias, int size)
+        void HuffmanCodes(byte[] datos, int[] frecuencias, int size)
         {
             root = buildTree(datos, frecuencias, size);
 
@@ -91,22 +92,22 @@ namespace DataStructures
             DoubleLinkedList<HuffmanHeapNode> dictionary = new DoubleLinkedList<HuffmanHeapNode>();
             for (int i = 0; i < content.Length; i++)
             {
-                var temp = dictionary.Find(x => x.caracter.CompareTo((char)content[i]));
+                var temp = dictionary.Find(x => x.caracter.CompareTo(content[i]));
                 if (temp != null)
                 {
                     temp.frecuencia++;
-                    if(temp.frecuencia > frecuenciaMayor)
+                    if (temp.frecuencia > frecuenciaMayor)
                     {
                         frecuenciaMayor = temp.frecuencia;
                     }
                 }
                 else
                 {
-                    dictionary.InsertAtEnd(new HuffmanHeapNode((char)content[i], 1));
+                    dictionary.InsertAtEnd(new HuffmanHeapNode(content[i], 1));
                 }
             }
 
-            char[] caracteres = new char[dictionary.Length];
+            byte[] caracteres = new byte[dictionary.Length];
             int[] frecuencias = new int[dictionary.Length];
 
             int mayor = 0;
@@ -116,30 +117,32 @@ namespace DataStructures
                 var temp = dictionary.Get(i);
                 caracteres[i] = temp.caracter;
                 frecuencias[i] = temp.frecuencia;
-                if(temp.frecuencia < frecuencias[menor])
+                if (temp.frecuencia < frecuencias[menor])
                 {
                     menor = i;
                 }
-                else if(frecuencias[mayor] < temp.frecuencia)
+                else if (frecuencias[mayor] < temp.frecuencia)
                 {
                     mayor = i;
                 }
             }
 
+            Array.Sort(frecuencias, caracteres);
+            Array.Reverse(frecuencias);
+            Array.Reverse(caracteres);
+
             HuffmanCodes(caracteres, frecuencias, dictionary.Length);
 
-            nodes.Sort((x,y)=> y.frecuencia.CompareTo(x.frecuencia));
-            
             int bytesForFrecuencys = (int)Math.Round(Math.Log(frecuenciaMayor) / Math.Log(256), 0, MidpointRounding.ToPositiveInfinity);
 
             string textInBinary = "";
 
             string textResult = "";
 
-            foreach (char letra in content)
+            foreach (byte letra in content)
             {
-                textInBinary += nodes.Find(x => x.caracter == letra).binaryCode;
-                if(textInBinary.Length >= 8)
+                textInBinary += codigos[letra];
+                if (textInBinary.Length >= 8)
                 {
                     textResult += (char)Convert.ToInt32(textInBinary.Substring(0, 8), 2);
                     textInBinary = textInBinary.Remove(0, 8);
@@ -148,7 +151,7 @@ namespace DataStructures
 
             if (textInBinary.Length > 0)
             {
-                while(textInBinary.Length < 8)
+                while (textInBinary.Length < 8)
                 {
                     textInBinary += 0;
                 }
@@ -156,26 +159,24 @@ namespace DataStructures
                 textInBinary = textInBinary.Remove(0, 8);
             }
 
-            byte[] result = new byte[2 + (bytesForFrecuencys + 1) * nodes.Count + textResult.Length];
+            byte[] result = new byte[2 + (bytesForFrecuencys + 1) * codigos.Count + textResult.Length];
 
-            result[0] = (byte)nodes.Count;
+            result[0] = (byte)codigos.Count;
             result[1] = (byte)bytesForFrecuencys;
 
-            
-            for(int i = 0; i < nodes.Count; i++)
+            for (int i = 0; i < frecuencias.Length; i++)
             {
-                var x = nodes[i];
-                result[2 + i*(bytesForFrecuencys + 1)] = (byte)x.caracter;
-                int numero = x.frecuencia;
-                for(int j = bytesForFrecuencys - 1; j >= 0; j--)
+                result[2 + i * (bytesForFrecuencys + 1)] = caracteres[i];
+                int numero = frecuencias[i];
+                for (int j = bytesForFrecuencys - 1; j >= 0; j--)
                 {
                     result[3 + i * (bytesForFrecuencys + 1) + j] = (byte)(numero / Math.Pow(256, j));
                 }
             }
 
-            for(int i = 0; i < textResult.Length; i++)
+            for (int i = 0; i < textResult.Length; i++)
             {
-                result[2 + (bytesForFrecuencys + 1) * nodes.Count + i] = (byte)textResult[i];
+                result[2 + (bytesForFrecuencys + 1) * codigos.Count + i] = (byte)textResult[i];
             }
 
             return result;
@@ -184,65 +185,61 @@ namespace DataStructures
         public byte[] Decompress(byte[] content)
         {
             int CantCaracteres = content[0];
+            if(CantCaracteres == 0)
+            {
+                CantCaracteres = 256;
+            }
             int bytesForFrecuency = content[1];
 
-            char[] caracteres = new char[CantCaracteres];
+            byte[] caracteres = new byte[CantCaracteres];
             int[] frecuencias = new int[CantCaracteres];
 
             int cantTotal = 0;
 
-            for(int i = 0; i < CantCaracteres; i++)
+            for (int i = 0; i < CantCaracteres; i++)
             {
-                caracteres[i] = (char)content[2 + i * (bytesForFrecuency + 1)];
-                for(int j = 0; j < bytesForFrecuency; j++)
+                caracteres[i] = content[2 + i * (bytesForFrecuency + 1)];
+                for (int j = 0; j < bytesForFrecuency; j++)
                 {
-                    frecuencias[i] += (int)(content[3 + i * (bytesForFrecuency + 1) + j] * Math.Pow(256, j));
+                    frecuencias[i] += (short)(content[3 + i * (bytesForFrecuency + 1) + j] * Math.Pow(256, j));
                 }
                 cantTotal += frecuencias[i];
             }
 
             HuffmanCodes(caracteres, frecuencias, CantCaracteres);
 
-            nodes.Sort((x, y) => y.frecuencia.CompareTo(x.frecuencia));
-
             string binaryText = "";
-            string resultText = "";
-            int cantMin = (bytesForFrecuency * 8);
+            int cont = 0;
+            byte[] result = new byte[cantTotal];
+            int bitsIntercambiados = 0;
+            var current = root;
 
-            for (int i = 2 + (bytesForFrecuency + 1) * nodes.Count; i < content.Length && cantTotal > 0; i++)
+            for (int i = 2 + (bytesForFrecuency + 1) * CantCaracteres; i < content.Length && cont < cantTotal; i++)
             {
                 binaryText += Convert.ToString(content[i], 2).PadLeft(8, '0');
-                if (binaryText.Length >= cantMin)
+                current = root;
+                for (int j = 0; j < binaryText.Length && cont < cantTotal; j++)
                 {
-                    bool encontrado = false;
-                    do
+                    if (binaryText[j] == '0')
                     {
-                        encontrado = false;
-                        foreach (var x in nodes)
-                        {
-                            if (binaryText.StartsWith(x.binaryCode) && cantTotal > 0)
-                            {
-                                resultText += x.caracter;
-                                binaryText = binaryText.Remove(0, x.binaryCode.Length);
-                                encontrado = true;
-                                cantTotal--;
-                                break;
-                            }
-                        }
+                        current = current.left;
                     }
-                    while (encontrado && cantTotal > 0);
+                    else
+                    {
+                        current = current.right;
+                    }
+                    if(isLeaf(current))
+                    {
+                        result[cont] = current.caracter;
+                        cont++;
+                        bitsIntercambiados += current.binaryCode.Length;
+                        current = root;
+                    }
                 }
+                binaryText = binaryText.Remove(0, bitsIntercambiados);
+                bitsIntercambiados = 0;
             }
-
             
-
-            byte[] result = new byte[resultText.Length];
-
-            for(int i = 0; i < resultText.Length; i++)
-            {
-                result[i] = (byte)resultText[i];
-            }
-
             return result;
         }
 

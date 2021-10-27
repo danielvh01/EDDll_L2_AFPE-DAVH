@@ -91,8 +91,8 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
         [HttpPost("decompress")]
         public IActionResult Post([FromForm] FileUPloadAPI? objFile)
         {
-            try
-            {
+            //try
+            //{
                 if (objFile.FILE != null)
                 {
                     if (objFile.FILE.Length > 0)
@@ -112,6 +112,7 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                         HuffmanTest decompress = new HuffmanTest();
 
                         byte[] textDecompressed = decompress.Decompress(content);
+                        //byte[] textDecompressed = new byte[0];
 
                         string OriginalFileName = "";
                         foreach(var compression in Singleton.Instance.compressions)
@@ -134,11 +135,11 @@ namespace EDDll_L2_AFPE_DAVH.Controllers
                 {
                     return StatusCode(500);
                 }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            //}
+            //catch
+            //{
+            //    return StatusCode(500);
+            //}
         }
 
 
